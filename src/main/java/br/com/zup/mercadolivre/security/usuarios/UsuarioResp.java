@@ -9,7 +9,7 @@ public class UsuarioResp {
 	private String nome;
 	private String email;
 
-	UsuarioResp(Usuario usuario){
+	public UsuarioResp(Usuario usuario){
 		this.id = usuario.getId();
 		this.nome = usuario.getNome();
 		this.email = usuario.getEmail();
