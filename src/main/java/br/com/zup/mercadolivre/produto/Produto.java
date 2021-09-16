@@ -3,13 +3,19 @@ package br.com.zup.mercadolivre.produto;
 import br.com.zup.mercadolivre.caracteristica.CaracteristicaProduto;
 import br.com.zup.mercadolivre.categoria.Categoria;
 import br.com.zup.mercadolivre.security.usuarios.Usuario;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.Size;
+import java.io.File;
+import java.io.IOException;
 import java.math.BigDecimal;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,10 +41,14 @@ public class Produto {
     private Categoria categoria;
     @NotNull
     @Size(min = 3)
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "produto", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
+    @OneToMany(mappedBy = "produto")
     private List<CaracteristicaProduto> caracteristicasProduto = new ArrayList<>();
     @ManyToOne
     private Usuario usuario;
+    @NotNull
+    @Size(min = 1) //Esta validação não dispensa a de cima
+    @OneToMany(mappedBy = "produto", cascade = CascadeType.ALL)
+    private List<ImagemProduto> imagensProduto = new ArrayList();
 
     public Produto() {
     }
@@ -92,4 +102,32 @@ public class Produto {
     public void setCaracteristicasProduto(List<CaracteristicaProduto> caracteristicasProduto) {
         this.caracteristicasProduto = caracteristicasProduto;
     }
+
+    public List<String> gravaImagens(List<MultipartFile> imagens){
+        List<String> listaNomes = new ArrayList<>();
+        String momento = LocalDateTime.now().toString();
+        for (MultipartFile file: imagens){
+            String nomeFile =  System.getProperty("user.dir").toString() + File.separator +
+                    "img-" +  momento.replaceAll(":", "-") + "-" + file.getOriginalFilename();
+            Path pathFile =  Paths.get(nomeFile);
+            try {
+                file.transferTo(pathFile.toFile());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            listaNomes.add(pathFile.toString());
+        }
+        return listaNomes;
+    }
+
+
+
+    public void vinculaImagens(List<String> listaDeCaminhosDasImagens){
+
+        for (String  umCaminho : listaDeCaminhosDasImagens) {
+            this.imagensProduto.add(new ImagemProduto(this, umCaminho ));
+        }
+
+    }
+
 }

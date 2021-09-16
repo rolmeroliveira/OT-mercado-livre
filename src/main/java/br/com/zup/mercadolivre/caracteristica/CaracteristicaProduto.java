@@ -19,26 +19,36 @@ public class CaracteristicaProduto {
     private String nome;
     private String descricao;
 
+    public CaracteristicaProduto() {
+    }
+
     public CaracteristicaProduto(Produto produto, String nome, String descricao) {
         this.produto = produto;
         this.nome = nome;
         this.descricao = descricao;
     }
 
-    public Long getId() {
-        return id;
-    }
-
     public Produto getProduto() {
         return produto;
+    }
+
+    public void setProduto(Produto produto) {
+        this.produto = produto;
     }
 
     public String getNome() {
         return nome;
     }
 
+    public void setNome(String nome) {
+        this.nome = nome;
+    }
+
     public String getDescricao() {
         return descricao;
     }
 
+    public void setDescricao(String descricao) {
+        this.descricao = descricao;
+    }
 }
