@@ -50,6 +50,9 @@ public class Produto {
     @OneToMany(mappedBy = "produto", cascade = CascadeType.ALL)
     private List<ImagemProduto> imagensProduto = new ArrayList();
 
+    @OneToMany(mappedBy = "produto", cascade = CascadeType.ALL)
+    private List<OpiniaoProduto> opinioes = new ArrayList<>();
+
     public Produto() {
     }
 
@@ -120,14 +123,15 @@ public class Produto {
         return listaNomes;
     }
 
-
-
     public void vinculaImagens(List<String> listaDeCaminhosDasImagens){
-
         for (String  umCaminho : listaDeCaminhosDasImagens) {
             this.imagensProduto.add(new ImagemProduto(this, umCaminho ));
         }
-
     }
+
+    public void vinculaOpinioes(OpiniaoProduto pergunta){
+            this.opinioes.add(pergunta);
+    }
+
 
 }

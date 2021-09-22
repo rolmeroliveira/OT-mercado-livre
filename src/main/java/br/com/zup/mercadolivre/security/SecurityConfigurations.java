@@ -49,7 +49,7 @@ public class SecurityConfigurations extends WebSecurityConfigurerAdapter {
 		http.authorizeRequests()
 
 		//Produtos
-		//.antMatchers(HttpMethod.POST, "/produtos/**").permitAll()
+		.antMatchers(HttpMethod.POST, "/produtos/**").permitAll()
 
 		//Segurança
 		.antMatchers(HttpMethod.POST, "/usuarios").permitAll()

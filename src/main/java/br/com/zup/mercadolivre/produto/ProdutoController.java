@@ -6,7 +6,6 @@ import br.com.zup.mercadolivre.validacao.NomeRepetidoValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -66,15 +65,10 @@ public class ProdutoController {
     @Transactional
     public ResponseEntity<String> adiconaImagens( @PathVariable("id") Long id, List<MultipartFile> imagens, UriComponentsBuilder ucb){
         Produto produto = repository.findById(id).get();
-        Object userDetails  = SecurityContextHolder.getContext().getAuthentication()
-                .getPrincipal();
-        if( userDetails == null)
-            return ResponseEntity.badRequest().body("nenhum usuário logado");
-        Usuario usuario = (Usuario) userDetails;
-        if( produto == null)
-            return ResponseEntity.badRequest().body("Produto não existe");
-        if(usuario.getId() != produto.getUsuario().getId() )
-            return ResponseEntity.badRequest().body("Produto não pertence ao usuário");
+        Usuario usuarioLogado =  retornaUsuarioLogado();
+        if( usuarioLogado == null) return ResponseEntity.badRequest().body("Usuário precisa estar logado");
+        if( produto == null) return ResponseEntity.badRequest().body("Produto não existe");
+        if (!produtoPertenceAoUsuarioLogado(produto, usuarioLogado)) return ResponseEntity.badRequest().body("Produto não pertence ao usuário");
         if (imagens.size() < 1) return ResponseEntity.badRequest().body("Pelo menos uma imagem deve ser definida");
 
         //Chamo um método em Produto, que grava as imagens em disco e
@@ -88,6 +82,35 @@ public class ProdutoController {
         repository.save(produto);
         URI uri = ucb.path("produto/{id}").buildAndExpand(produto.getId()).toUri();
         return ResponseEntity.created(uri).body("Imagem vinculada ao produto com sucesso");
+    }
+
+
+    @PostMapping(path = "/{id}/opinioes")
+    //@Transactional
+    public ResponseEntity<String> adiconaOpiniao(@PathVariable("id") Long id, @RequestBody @Valid OpinaoProdutoRequest opiniaoRequest, UriComponentsBuilder ucb){
+        Usuario usuarioLogado =  retornaUsuarioLogado();
+        if( usuarioLogado == null) return ResponseEntity.badRequest().body("Usuário precisa estar logado");
+        Produto produto = repository.findById(id).get();
+        if( produto == null) return ResponseEntity.badRequest().body("Produto não existe");
+        OpiniaoProduto perguntaModel = opiniaoRequest.toModel(usuarioLogado, produto );
+        produto.vinculaOpinioes(perguntaModel);
+        repository.save(produto);
+        URI uri = ucb.path("produto/{id}").buildAndExpand(produto.getId()).toUri();
+        return ResponseEntity.created(uri).body("Opiniao incluída com sucesso");
+    }
+
+    private boolean produtoPertenceAoUsuarioLogado(Produto produto, Usuario usuario){
+        if(usuario.getId() != produto.getUsuario().getId()) return false;
+        return true;
+    }
+
+    private Usuario retornaUsuarioLogado (){
+        Object userDetails  = SecurityContextHolder.getContext().getAuthentication()
+                .getPrincipal();
+        if( userDetails != "anonymousUser")
+            return (Usuario) userDetails;
+        else
+            return null;
     }
 
 
