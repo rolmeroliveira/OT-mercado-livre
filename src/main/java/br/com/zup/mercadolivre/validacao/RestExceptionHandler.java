@@ -13,10 +13,13 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import javax.validation.ConstraintViolation;
+import javax.validation.ConstraintViolationException;
 import java.sql.SQLIntegrityConstraintViolationException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 @RestControllerAdvice
 public class RestExceptionHandler {
@@ -52,5 +55,35 @@ public class RestExceptionHandler {
         return new StandardError(LocalDateTime.now(), HttpStatus.BAD_REQUEST.value(), HttpStatus.BAD_REQUEST.toString(),
                 exception.getLocalizedMessage());
     }
+
+
+    @ExceptionHandler(CustomNotFoundException.class)
+    @ResponseStatus(code = HttpStatus.NOT_FOUND)
+    public StandardError handleCustomNotFoundException(CustomNotFoundException exception) {
+        return new StandardError(LocalDateTime.now(), HttpStatus.NOT_FOUND.value(), HttpStatus.NOT_FOUND.toString(),
+                exception.getMsg());
+    }
+
+    @ExceptionHandler(GeneralBusinesException.class)
+    @ResponseStatus(code = HttpStatus.UNPROCESSABLE_ENTITY)
+    public StandardError handleCustomNotOwnerException(GeneralBusinesException exception) {
+        return new StandardError(LocalDateTime.now(), HttpStatus.UNPROCESSABLE_ENTITY.value(), HttpStatus.UNPROCESSABLE_ENTITY.toString(),
+                exception.getMsg());
+    }
+
+    @ExceptionHandler(ConstraintViolationException.class)
+    @ResponseStatus(code = HttpStatus.BAD_REQUEST)
+    public StandardError handleCustomInvalidValueOnField(ConstraintViolationException ex) {
+        Set<ConstraintViolation<?>> violations = ex.getConstraintViolations();
+        String mensagem = "";
+
+        for (ConstraintViolation<?> violation : violations) {
+            mensagem += violation.getMessage();
+        }
+        return new StandardError(LocalDateTime.now(), HttpStatus.BAD_REQUEST.value(),
+                HttpStatus.BAD_REQUEST.toString(),
+                mensagem);
+    }
+
 
 }

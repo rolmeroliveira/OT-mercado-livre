@@ -1,5 +1,6 @@
-package br.com.zup.mercadolivre.produto;
+package br.com.zup.mercadolivre.imagem;
 
+import br.com.zup.mercadolivre.produto.Produto;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;

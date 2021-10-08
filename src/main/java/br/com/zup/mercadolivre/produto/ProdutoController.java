@@ -1,8 +1,19 @@
 package br.com.zup.mercadolivre.produto;
 
+import br.com.zup.mercadolivre.opiniao.OpinaoProdutoRequest;
+import br.com.zup.mercadolivre.opiniao.OpiniaoProduto;
+import br.com.zup.mercadolivre.pergunta.EmailPergunta;
+import br.com.zup.mercadolivre.pergunta.PerguntaProduto;
+import br.com.zup.mercadolivre.pergunta.PerguntaProdutoRequest;
+import br.com.zup.mercadolivre.pergunta.PerguntaProdutoResponse;
 import br.com.zup.mercadolivre.repository.ProdutoRepository;
 import br.com.zup.mercadolivre.security.usuarios.Usuario;
+import br.com.zup.mercadolivre.security.usuarios.UsuarioRepository;
+import br.com.zup.mercadolivre.validacao.CustomNotFoundException;
+import br.com.zup.mercadolivre.validacao.GeneralBusinesException;
 import br.com.zup.mercadolivre.validacao.NomeRepetidoValidator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -16,14 +27,20 @@ import javax.transaction.Transactional;
 import javax.validation.Valid;
 import java.net.URI;
 import java.util.List;
+
 import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/produtos")
 public class ProdutoController {
 
+    Logger logger = LoggerFactory.getLogger(ProdutoController.class);
+
     @Autowired
     ProdutoRepository repository;
+    @Autowired
+    UsuarioRepository usuarioRepository;
+
     @Autowired
     EntityManager em;
 
@@ -99,6 +116,39 @@ public class ProdutoController {
         return ResponseEntity.created(uri).body("Opiniao incluída com sucesso");
     }
 
+
+    @PostMapping(path = "/{id}/perguntas")
+    public ResponseEntity<PerguntaProdutoResponse> adiconaPergunta(@PathVariable("id") Long id, @RequestBody @Valid PerguntaProdutoRequest perguntaProdutoRequest){
+        logger.trace("Usuário tentou incluir uma pergunta sobre o produto com id: " + id );
+        Produto produtoRetornado = repository.findById(id).orElseThrow(() -> {
+                logger.error("Usuário tentou perguntar sobre um produto que não existe");
+                throw new CustomNotFoundException("cartao", "Este produto não existe no sistema");}
+        );
+
+        Usuario usuarioPergunta = retornaUsuarioLogado();
+        if( usuarioPergunta == null) {
+            logger.error("Tentativa de fazer pergunta sem efetuar login");
+            throw new GeneralBusinesException(null, "O usuário precisa estar logado para fazer perguntas");
+        }
+
+        Usuario donoDoProduto = retornaDonoDoProduto(produtoRetornado);
+        if( usuarioPergunta == null) {
+            logger.error("Não foi possível encontar o dono do produto id:  " + produtoRetornado.getId() + " - nome: " + produtoRetornado.getNome());
+            throw new GeneralBusinesException(null, "Não foi possível encontrar o dono do produto, para encaminhar a pergunta");
+        }
+
+        PerguntaProduto perguntaProduto = perguntaProdutoRequest.toModel(usuarioPergunta,produtoRetornado);
+        produtoRetornado.incluiPergunta(perguntaProduto);
+        repository.save(produtoRetornado);
+
+        EmailPergunta emailPergunta = new EmailPergunta(produtoRetornado);
+        emailPergunta.enviaEmail();
+
+        PerguntaProdutoResponse perguntaProdutoResponse = new PerguntaProdutoResponse(perguntaProduto);
+
+        return ResponseEntity.ok().body(perguntaProdutoResponse);
+    }
+
     private boolean produtoPertenceAoUsuarioLogado(Produto produto, Usuario usuario){
         if(usuario.getId() != produto.getUsuario().getId()) return false;
         return true;
@@ -111,6 +161,17 @@ public class ProdutoController {
             return (Usuario) userDetails;
         else
             return null;
+    }
+
+        private Usuario retornaDonoDoProduto(Produto produto){
+        Long idDonoProduto = produto.getUsuario().getId();
+        Usuario usuario = usuarioRepository.findById(idDonoProduto).orElseThrow(
+                ()->{
+                    logger.error("Tentou fazer pergunta sobre produto sem dono, ou dono do produto não encontrado");
+                    throw new GeneralBusinesException("Vendedor do produto", "Não foi possível encontrar o vendedor do produto");
+                }
+        );
+        return usuario;
     }
 
 

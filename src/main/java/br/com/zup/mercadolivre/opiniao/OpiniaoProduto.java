@@ -1,5 +1,6 @@
-package br.com.zup.mercadolivre.produto;
+package br.com.zup.mercadolivre.opiniao;
 
+import br.com.zup.mercadolivre.produto.Produto;
 import br.com.zup.mercadolivre.security.usuarios.Usuario;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.validator.constraints.Length;

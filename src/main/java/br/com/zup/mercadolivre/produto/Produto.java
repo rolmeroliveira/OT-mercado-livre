@@ -2,6 +2,9 @@ package br.com.zup.mercadolivre.produto;
 
 import br.com.zup.mercadolivre.caracteristica.CaracteristicaProduto;
 import br.com.zup.mercadolivre.categoria.Categoria;
+import br.com.zup.mercadolivre.imagem.ImagemProduto;
+import br.com.zup.mercadolivre.opiniao.OpiniaoProduto;
+import br.com.zup.mercadolivre.pergunta.PerguntaProduto;
 import br.com.zup.mercadolivre.security.usuarios.Usuario;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -52,6 +55,10 @@ public class Produto {
 
     @OneToMany(mappedBy = "produto", cascade = CascadeType.ALL)
     private List<OpiniaoProduto> opinioes = new ArrayList<>();
+
+    @OneToMany(mappedBy = "produto", cascade = CascadeType.ALL)
+    private List<PerguntaProduto> perguntas = new ArrayList<>();
+
 
     public Produto() {
     }
@@ -132,6 +139,12 @@ public class Produto {
     public void vinculaOpinioes(OpiniaoProduto pergunta){
             this.opinioes.add(pergunta);
     }
-
+    public void incluiPergunta(PerguntaProduto pergunta){
+        this.perguntas.add(pergunta);
+    }
+    public PerguntaProduto retornaUltimapergunta (){
+        PerguntaProduto perguntaProduto = this.perguntas.get(this.perguntas.size() -1);
+        return perguntaProduto;
+    }
 
 }

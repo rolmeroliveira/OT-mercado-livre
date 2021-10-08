@@ -1,6 +1,9 @@
 package br.com.zup.mercadolivre.security;
 
 
+import br.com.zup.mercadolivre.produto.ProdutoController;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -17,7 +20,10 @@ import javax.validation.Valid;
 @RestController
 @RequestMapping("/auth")
 public class AutenticacaoController {
-	
+
+
+	Logger logger = LoggerFactory.getLogger(ProdutoController.class);
+
 	@Autowired
 	private AuthenticationManager authManager;
 	
@@ -29,6 +35,7 @@ public class AutenticacaoController {
 		UsernamePasswordAuthenticationToken dadosLogin = form.converter();
 		
 		try {
+			logger.trace("tentou fazer login");
 			Authentication authentication = authManager.authenticate(dadosLogin);
 			String token = tokenService.gerarToken(authentication);
 			return ResponseEntity.ok(new TokenDto(token, "Bearer"));
