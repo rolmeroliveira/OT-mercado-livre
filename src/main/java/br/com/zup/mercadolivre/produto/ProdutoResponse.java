@@ -1,17 +1,17 @@
 package br.com.zup.mercadolivre.produto;
 
-import br.com.zup.mercadolivre.caracteristica.CaracteristicaProduto;
 import br.com.zup.mercadolivre.caracteristica.CaracteristicaProdutoResp;
 import br.com.zup.mercadolivre.categoria.Categoria;
-import br.com.zup.mercadolivre.imagem.ImagemProduto;
-import br.com.zup.mercadolivre.opiniao.OpiniaoProduto;
-import br.com.zup.mercadolivre.pergunta.PerguntaProduto;
+import br.com.zup.mercadolivre.imagem.ImagemProdutoResp;
+import br.com.zup.mercadolivre.opiniao.OpiniaoProdutoResp;
+import br.com.zup.mercadolivre.pergunta.PerguntaProdutoResp;
 import br.com.zup.mercadolivre.security.usuarios.UsuarioResp;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class ProdutoResponse {
 
@@ -22,10 +22,10 @@ public class ProdutoResponse {
     private String descricao;
     private Categoria categoria;
     private UsuarioResp usuario;
-    private List<CaracteristicaProduto> caracteristicas = new ArrayList<>();
-    private List<ImagemProduto> imagens = new ArrayList();
-    private List<OpiniaoProduto> opinioes = new ArrayList<>();
-    private List<PerguntaProduto> perguntas = new ArrayList<>();
+    private List<CaracteristicaProdutoResp> caracteristicas = new ArrayList<>();
+    private List<ImagemProdutoResp> imagens = new ArrayList();
+    private List<OpiniaoProdutoResp> opinioes = new ArrayList<>();
+    private List<PerguntaProdutoResp> perguntas = new ArrayList<>();
 
     double totalDasNotas;
     double qtdNotas;
@@ -41,17 +41,19 @@ public class ProdutoResponse {
         this.categoria = produto.getCategoria();
         this.usuario = new UsuarioResp(produto.getUsuario());
 
-        caracteristicas =  produto.getCaracteristicasProduto();
-        imagens = produto.getImagensProduto();
-        opinioes = produto.getOpinioes();
-        perguntas = produto.getPerguntas();
+        //converto as lista de model para listas de responses
+        caracteristicas = produto.getCaracteristicasProduto().stream().map(c -> new CaracteristicaProdutoResp(c)).collect(Collectors.toList());
+        imagens = produto.getImagensProduto().stream().map(i -> new ImagemProdutoResp(i)).collect(Collectors.toList());
+        opinioes = produto.getOpinioes().stream().map(o -> new OpiniaoProdutoResp(o)).collect(Collectors.toList());
+        perguntas = produto.getPerguntas().stream().map(p -> new PerguntaProdutoResp(p)).collect(Collectors.toList());
 
+        //recupero um map com os detalhes do produto que precisam ser calculados
         Map<String, Double> detalhes = produto.getDetalhesDoProduto();
 
+        //sá um split no map de detalhes do produto, para passar itens separados no Json
         totalDasNotas = detalhes.get("totalDasNotas");
         qtdNotas = detalhes.get("qtdNotas");
         mediaNotas = detalhes.get("mediaNotas");
-
     }
 
 }

@@ -22,4 +22,16 @@ public class ImagemProduto {
         this.produto = produto;
         CaminhoImagem = caminhoImagem;
     }
+
+    public Long getId() {
+        return id;
+    }
+
+    public Produto getProduto() {
+        return produto;
+    }
+
+    public String getCaminhoImagem() {
+        return CaminhoImagem;
+    }
 }

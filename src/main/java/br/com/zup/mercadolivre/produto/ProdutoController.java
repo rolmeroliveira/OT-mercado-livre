@@ -5,7 +5,7 @@ import br.com.zup.mercadolivre.opiniao.OpiniaoProduto;
 import br.com.zup.mercadolivre.pergunta.EmailPergunta;
 import br.com.zup.mercadolivre.pergunta.PerguntaProduto;
 import br.com.zup.mercadolivre.pergunta.PerguntaProdutoRequest;
-import br.com.zup.mercadolivre.pergunta.PerguntaProdutoResponse;
+import br.com.zup.mercadolivre.pergunta.PerguntaProdutoResp;
 import br.com.zup.mercadolivre.repository.ProdutoRepository;
 import br.com.zup.mercadolivre.security.usuarios.Usuario;
 import br.com.zup.mercadolivre.security.usuarios.UsuarioRepository;
@@ -118,7 +118,7 @@ public class ProdutoController {
 
 
     @PostMapping(path = "/{id}/perguntas")
-    public ResponseEntity<PerguntaProdutoResponse> adiconaPergunta(@PathVariable("id") Long id, @RequestBody @Valid PerguntaProdutoRequest perguntaProdutoRequest){
+    public ResponseEntity<PerguntaProdutoResp> adiconaPergunta(@PathVariable("id") Long id, @RequestBody @Valid PerguntaProdutoRequest perguntaProdutoRequest){
         logger.trace("Usuário tentou incluir uma pergunta sobre o produto com id: " + id );
         Produto produtoRetornado = repository.findById(id).orElseThrow(() -> {
                 logger.error("Usuário tentou perguntar sobre um produto que não existe");
@@ -144,7 +144,7 @@ public class ProdutoController {
         EmailPergunta emailPergunta = new EmailPergunta(produtoRetornado);
         emailPergunta.enviaEmail();
 
-        PerguntaProdutoResponse perguntaProdutoResponse = new PerguntaProdutoResponse(perguntaProduto);
+        PerguntaProdutoResp perguntaProdutoResponse = new PerguntaProdutoResp(perguntaProduto);
 
         return ResponseEntity.ok().body(perguntaProdutoResponse);
     }

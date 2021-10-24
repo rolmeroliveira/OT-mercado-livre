@@ -3,7 +3,7 @@ package br.com.zup.mercadolivre.pergunta;
 import javax.persistence.*;
 import java.time.format.DateTimeFormatter;
 
-public class PerguntaProdutoResponse {
+public class PerguntaProdutoResp {
 
    private Long id;
    private String título;
@@ -11,10 +11,10 @@ public class PerguntaProdutoResponse {
    private String usuario;
    private String produto;
 
-   public PerguntaProdutoResponse() {
+   public PerguntaProdutoResp() {
    }
 
-   public PerguntaProdutoResponse(PerguntaProduto perguntaProduto) {
+   public PerguntaProdutoResp(PerguntaProduto perguntaProduto) {
       this.id = perguntaProduto.getId();
       this.título = perguntaProduto.getTítulo();
       this.DataDeCriacao = perguntaProduto.getInstanteCriacao().format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
