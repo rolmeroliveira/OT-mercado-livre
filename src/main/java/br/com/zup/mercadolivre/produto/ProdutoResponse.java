@@ -1,13 +1,17 @@
 package br.com.zup.mercadolivre.produto;
 
 import br.com.zup.mercadolivre.caracteristica.CaracteristicaProduto;
+import br.com.zup.mercadolivre.caracteristica.CaracteristicaProdutoResp;
 import br.com.zup.mercadolivre.categoria.Categoria;
-import br.com.zup.mercadolivre.security.usuarios.Usuario;
+import br.com.zup.mercadolivre.imagem.ImagemProduto;
+import br.com.zup.mercadolivre.opiniao.OpiniaoProduto;
+import br.com.zup.mercadolivre.pergunta.PerguntaProduto;
 import br.com.zup.mercadolivre.security.usuarios.UsuarioResp;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class ProdutoResponse {
 
@@ -17,8 +21,15 @@ public class ProdutoResponse {
     private BigDecimal valor;
     private String descricao;
     private Categoria categoria;
-    private List<CaracteristicaProduto> caracteristicasProduto  = new ArrayList<CaracteristicaProduto>();
-    private UsuarioResp usuarioResp;
+    private UsuarioResp usuario;
+    private List<CaracteristicaProduto> caracteristicas = new ArrayList<>();
+    private List<ImagemProduto> imagens = new ArrayList();
+    private List<OpiniaoProduto> opinioes = new ArrayList<>();
+    private List<PerguntaProduto> perguntas = new ArrayList<>();
+
+    double totalDasNotas;
+    double qtdNotas;
+    double mediaNotas;
 
     public ProdutoResponse(Produto produto) {
 
@@ -28,39 +39,19 @@ public class ProdutoResponse {
         this.valor = produto.getValor();
         this.descricao = produto.getDescricao();
         this.categoria = produto.getCategoria();
-        this.caracteristicasProduto.addAll(produto.getCaracteristicasProduto()) ;
-        this.usuarioResp = new UsuarioResp(produto.getUsuario()) ;
+        this.usuario = new UsuarioResp(produto.getUsuario());
+
+        caracteristicas =  produto.getCaracteristicasProduto();
+        imagens = produto.getImagensProduto();
+        opinioes = produto.getOpinioes();
+        perguntas = produto.getPerguntas();
+
+        Map<String, Double> detalhes = produto.getDetalhesDoProduto();
+
+        totalDasNotas = detalhes.get("totalDasNotas");
+        qtdNotas = detalhes.get("qtdNotas");
+        mediaNotas = detalhes.get("mediaNotas");
+
     }
 
-    public Long getId() {
-        return id;
-    }
-
-    public String getNome() {
-        return nome;
-    }
-
-    public Integer getQuantidade() {
-        return quantidade;
-    }
-
-    public BigDecimal getValor() {
-        return valor;
-    }
-
-    public String getDescricao() {
-        return descricao;
-    }
-
-    public Categoria getCategoria() {
-        return categoria;
-    }
-
-    public List<CaracteristicaProduto> getCaracteristicasProduto() {
-        return caracteristicasProduto;
-    }
-
-    public UsuarioResp getUsuarioResp() {
-        return usuarioResp;
-    }
 }

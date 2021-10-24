@@ -38,6 +38,9 @@ public class PerguntaProduto {
       this.produto = produto;
    }
 
+   public Long getId() {
+      return id;
+   }
 
    public String getTítulo() {
       return título;

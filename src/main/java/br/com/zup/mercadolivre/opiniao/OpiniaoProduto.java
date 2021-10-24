@@ -50,6 +50,10 @@ public class OpiniaoProduto {
         this.produto = produto;
     }
 
+    public Long getId() {
+        return id;
+    }
+
     public void setNota(Integer nota) {
         this.nota = nota;
     }
@@ -68,5 +72,27 @@ public class OpiniaoProduto {
 
     public void setProduto(Produto produto) {
         this.produto = produto;
+    }
+
+
+
+    public Integer getNota() {
+        return nota;
+    }
+
+    public String getTítulo() {
+        return título;
+    }
+
+    public String getDescricao() {
+        return descricao;
+    }
+
+    public Usuario getUsuario() {
+        return usuario;
+    }
+
+    public Produto getProduto() {
+        return produto;
     }
 }

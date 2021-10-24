@@ -19,8 +19,8 @@ import java.math.BigDecimal;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 
 @Entity
@@ -146,5 +146,45 @@ public class Produto {
         PerguntaProduto perguntaProduto = this.perguntas.get(this.perguntas.size() -1);
         return perguntaProduto;
     }
+
+    public List<ImagemProduto> getImagensProduto() {
+        return imagensProduto;
+    }
+
+    public List<OpiniaoProduto> getOpinioes() {
+        return opinioes;
+    }
+
+    public List<PerguntaProduto> getPerguntas() {
+        return perguntas;
+    }
+
+
+    public Map<String, Double> getDetalhesDoProduto(){
+        //este map serã usado para retornar os detalhes do produto
+        //Total das notas
+        //Qtd de notas
+        //média das notas
+        Map<String, Double> detalhes = new HashMap<>();
+
+        //lista de notas válidas convertidas para double
+        List<Double> lista =  opinioes.stream()
+                .map(OpiniaoProduto::getNota)
+                .filter(Objects::nonNull)
+                .map(nota -> (double) nota)
+                .collect(Collectors.toList());
+
+        double totalDasNotas = lista.stream().reduce(0.0, Double::sum);
+        double qtdNotas = lista.size();
+        double mediaNotas = totalDasNotas == 0 || qtdNotas == 0 ? 0 : totalDasNotas / qtdNotas;
+
+        detalhes.put("TotalDasNotas", totalDasNotas);
+        detalhes.put("qtdNotas", qtdNotas);
+        detalhes.put("mediaNotas", mediaNotas);
+        
+        return detalhes;
+    }
+
+
 
 }

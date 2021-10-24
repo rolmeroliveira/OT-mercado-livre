@@ -28,6 +28,10 @@ public class CaracteristicaProduto {
         this.descricao = descricao;
     }
 
+    public Long getId() {
+        return id;
+    }
+
     public Produto getProduto() {
         return produto;
     }
@@ -51,4 +55,5 @@ public class CaracteristicaProduto {
     public void setDescricao(String descricao) {
         this.descricao = descricao;
     }
+
 }

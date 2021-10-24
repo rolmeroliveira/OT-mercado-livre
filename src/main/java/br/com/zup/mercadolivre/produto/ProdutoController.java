@@ -149,6 +149,17 @@ public class ProdutoController {
         return ResponseEntity.ok().body(perguntaProdutoResponse);
     }
 
+    @GetMapping(path = "/{id}/detalhes")
+    public ResponseEntity<ProdutoResponse> detalhesProduto(@PathVariable("id") Long id){
+        logger.trace("Foi Solicitada entrega dos detalhes do produto com id: " + id );
+        Produto produtoRetornado = repository.findById(id).orElseThrow(() -> {
+            logger.error("Usuário tentou ver detalhes de um produto que não existe");
+            throw new CustomNotFoundException("produto", "Este produto não existe no sistema");}
+        );
+        ProdutoResponse produtoResponse = new ProdutoResponse(produtoRetornado);
+        return ResponseEntity.ok().body(produtoResponse);
+    }
+
     private boolean produtoPertenceAoUsuarioLogado(Produto produto, Usuario usuario){
         if(usuario.getId() != produto.getUsuario().getId()) return false;
         return true;
