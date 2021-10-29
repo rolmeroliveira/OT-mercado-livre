@@ -3,7 +3,7 @@ package br.com.zup.mercadolivre.produto;
 import br.com.zup.mercadolivre.caracteristica.CaracteristicaProduto;
 import br.com.zup.mercadolivre.caracteristica.CaracteristicaProdutoRequest;
 import br.com.zup.mercadolivre.categoria.Categoria;
-import br.com.zup.mercadolivre.security.usuarios.Usuario;
+import br.com.zup.mercadolivre.security.usuario.Usuario;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
@@ -25,7 +25,7 @@ public class ProdutoRequest {
     @Column(unique = true)
     private String nome;
     @Positive
-    private Integer quantidade;
+    private BigDecimal quantidade;
     @NotNull
     @Positive
     private BigDecimal valor;
@@ -38,7 +38,7 @@ public class ProdutoRequest {
     private List<CaracteristicaProdutoRequest> caracteristicaProdutoRequest = new ArrayList<>();
     private Usuario usuario;
 
-    public ProdutoRequest( String nome, Integer quantidade,
+    public ProdutoRequest( String nome, BigDecimal quantidade,
                           BigDecimal valor,
                           String descricao, Long categoria,
                           List<CaracteristicaProdutoRequest> caracteristicas) {

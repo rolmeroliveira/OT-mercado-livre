@@ -5,7 +5,7 @@ import br.com.zup.mercadolivre.categoria.Categoria;
 import br.com.zup.mercadolivre.imagem.ImagemProdutoResp;
 import br.com.zup.mercadolivre.opiniao.OpiniaoProdutoResp;
 import br.com.zup.mercadolivre.pergunta.PerguntaProdutoResp;
-import br.com.zup.mercadolivre.security.usuarios.UsuarioResp;
+import br.com.zup.mercadolivre.security.usuario.UsuarioResp;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -17,7 +17,7 @@ public class ProdutoResponse {
 
     private Long id;
     private String nome;
-    private Integer quantidade;
+    private BigDecimal quantidade;
     private BigDecimal valor;
     private String descricao;
     private Categoria categoria;

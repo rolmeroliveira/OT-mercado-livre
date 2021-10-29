@@ -1,4 +1,4 @@
-package br.com.zup.mercadolivre.security.usuarios;
+package br.com.zup.mercadolivre.security.usuario;
 
 
 import org.springframework.data.jpa.repository.JpaRepository;

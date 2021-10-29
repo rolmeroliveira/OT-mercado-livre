@@ -1,7 +1,7 @@
 package br.com.zup.mercadolivre.opiniao;
 
 import br.com.zup.mercadolivre.produto.Produto;
-import br.com.zup.mercadolivre.security.usuarios.Usuario;
+import br.com.zup.mercadolivre.security.usuario.Usuario;
 import org.hibernate.validator.constraints.Length;
 
 import javax.validation.constraints.Max;

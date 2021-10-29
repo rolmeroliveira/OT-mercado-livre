@@ -1,28 +1,28 @@
-package br.com.zup.mercadolivre.security.usuarios;
+package br.com.zup.mercadolivre.security.usuario;
 
 
 public class UsuarioResp {
 
-	private static final long serialVersionUID = 1L;
-
-	private Long id;
 	private String nome;
 	private String email;
+	private String cpfCnpj;
 
-	public UsuarioResp(Usuario usuario){
-		this.id = usuario.getId();
+	public UsuarioResp() {
+	}
+
+	public UsuarioResp(Usuario usuario) {
 		this.nome = usuario.getNome();
 		this.email = usuario.getEmail();
+		this.cpfCnpj = usuario.getCpfCnpj();
 	}
 
-	public Long getId() {
-		return id;
-	}
 	public String getNome() {
 		return nome;
 	}
 	public String getEmail() {
 		return email;
 	}
-
+	public String getCpfCnpj() {
+		return cpfCnpj;
+	}
 }

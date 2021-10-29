@@ -5,7 +5,7 @@ import br.com.zup.mercadolivre.categoria.Categoria;
 import br.com.zup.mercadolivre.imagem.ImagemProduto;
 import br.com.zup.mercadolivre.opiniao.OpiniaoProduto;
 import br.com.zup.mercadolivre.pergunta.PerguntaProduto;
-import br.com.zup.mercadolivre.security.usuarios.Usuario;
+import br.com.zup.mercadolivre.security.usuario.Usuario;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.*;
@@ -32,7 +32,7 @@ public class Produto {
     @Column(unique = true)
     private String nome;
     @Positive
-    private Integer quantidade;
+    private BigDecimal quantidade;
     @NotNull
     @Positive
     private BigDecimal valor;
@@ -63,7 +63,7 @@ public class Produto {
     public Produto() {
     }
 
-    public Produto(String nome, Integer quantidade, BigDecimal valor,
+    public Produto(String nome, BigDecimal quantidade, BigDecimal valor,
                    String descricao, Categoria categoria, Usuario usuario
                    )
     {
@@ -85,7 +85,7 @@ public class Produto {
         return nome;
     }
 
-    public Integer getQuantidade() {
+    public BigDecimal getQuantidade() {
         return quantidade;
     }
 
@@ -185,6 +185,8 @@ public class Produto {
         return detalhes;
     }
 
-
-
+    public void alteraEstoque(BigDecimal qtdMovimentada, TipoMovimentacaoEstoque t){
+        BigDecimal qtd = qtdMovimentada.multiply(t.getFatorMultiplicaao());
+        this.quantidade =  this.quantidade.add(qtd );
+    }
 }

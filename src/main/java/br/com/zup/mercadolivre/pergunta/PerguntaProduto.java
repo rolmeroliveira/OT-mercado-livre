@@ -1,7 +1,7 @@
 package br.com.zup.mercadolivre.pergunta;
 
 import br.com.zup.mercadolivre.produto.Produto;
-import br.com.zup.mercadolivre.security.usuarios.Usuario;
+import br.com.zup.mercadolivre.security.usuario.Usuario;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
